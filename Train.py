@@ -119,14 +119,24 @@ def distributed_train_step(low,high):
                          axis=None)
 
 
-def Trainer(epochs,checkpoint_name):
-	for ep in range(epochs):
-	    for x,y in DISTRIBUTED_train_DATASET:
-	        dlos,glos,psn = distributed_train_step(x,y)
-	        PSNR_.reset_states()
-	        psnr_est = psn.numpy()
-	        print(f"Train steps : {ep} PSNR : {psnr_est}")
-	        generator.save_weights(checkpoint_name)
+PSNR_val = PSNR_metric()
+
+
+def Trainer(epochs):
+    for epoch in range(30):
+        for x,y in DISTRIBUTED_train_DATASET:
+            dlos,glos,psn = distributed_train_step(x,y)
+
+            PSNR_.reset_states()
+            psnr_est = psn.numpy()
+            print(f"Train steps : {epoch} TRAIN-PSNR : {psnr_est}")
+            generator.save_weights("CHECKPOINT.h5")
+        print("Validation Results ....")
+        for b,z in VAL:
+            out = generator.predict_on_batch(b)
+            val_metric = PSNR_val.update_state(z,out)
+            print(f"PSNR : {PSNR_val.result().numpy()}")
+            PSNR_val.reset_states()
 
 
 
