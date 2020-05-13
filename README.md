@@ -7,6 +7,6 @@ Baseline framework to train any image to image model
 
 
 ## Core Functionality
-* Train any Image to Image response models
+* Train any Image to Image models with ease customization( Documentation in development)
 * add or detach models easily
 * Only supports distributed training
