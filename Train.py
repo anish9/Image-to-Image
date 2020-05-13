@@ -44,7 +44,7 @@ VAL   = VAL.map(loader,num_parallel_calls=tf.data.experimental.AUTOTUNE)
 TRAIN = TRAIN.batch(BATCH_SIZE,drop_remainder=True).shuffle(BUFFER)
 VAL   = VAL.batch(BATCH_SIZE,drop_remainder=True).shuffle(BUFFER)
 DISTRIBUTED_train_DATASET = strategy.experimental_distribute_dataset(TRAIN)
-DISTRIBUTED_val_DATASET = strategy.experimental_distribute_dataset(VAL)  #val gen is not fixed in the process
+
 
 
 
