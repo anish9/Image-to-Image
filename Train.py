@@ -19,7 +19,7 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import *
 from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping,TensorBoard
-from config import EPOCH
+from config import EPOCH,save_freq
 
 """import your Model blocks here"""
 from dataset import *
