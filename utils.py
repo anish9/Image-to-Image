@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.models import Model
 
 
 image_shape = (None,None,3)
@@ -20,10 +21,9 @@ class PSNR_metric(tf.keras.metrics.Metric):
         return self.psnr_hub
 
 class Custom_Loss(tf.keras.losses.Loss):
-	"""precep loss"""
     def __init__(self,reduction):
         super(Custom_Loss,self).__init__(reduction=reduction)
-    
+
     def call(self,y_true,y_pred):
         loss_model = Model(inputs=vgg.input, outputs=vgg.get_layer('block3_conv3').output)
         loss_model.trainable = False

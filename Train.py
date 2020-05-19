@@ -5,9 +5,9 @@
 
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+configp = ConfigProto()
+configp.gpu_options.allow_growth = True
+session = InteractiveSession(config=configp)
 
 import cv2
 import numpy as np
@@ -19,12 +19,13 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import *
 from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping,TensorBoard
+from config import EPOCH
 
 """import your Model blocks here"""
 from dataset import *
 from utils import *
-from g_engine.rdnsr import *
 from d_engine.discrim import *
+from g_engine.rdnsr import *
 
 strategy = tf.distribute.MirroredStrategy()
 
@@ -53,7 +54,7 @@ with strategy.scope():
     metric_op     = tf.keras.losses.Reduction.NONE
     disc_optim    = tf.keras.optimizers.Adam(1e-4)
     gen_optim     = tf.keras.optimizers.Adam(1e-5)
-    generator     = RRDNSR(upsample=UPSCALE,rdb_depth=6)
+    generator     = RRDNSR(upsample=UPSCALE,rdb_depth=12)
 #     generator.load_weights("CHECKPOINT1.h5")
     discriminator = discriminator(HIGH_RESOLUTION,HIGH_RESOLUTION)
     PSNR_         = PSNR_metric()
@@ -97,7 +98,6 @@ def train_step(low,high,add_disc):
         generate     = generator(low)
         predictions2 = discriminator(generate)
         lables2      = tf.ones((batch_size,1))
-#         loss_op      = LOSSES(high,generate,predictions2,lables2)
         loss_op1 = compute_loss1(high,generate)
         loss_op2 = compute_loss2(lables2,predictions2)
         loss_op4 = compute_loss4(high,generate)
@@ -122,23 +122,24 @@ def distributed_train_step(low,high):
 PSNR_val = PSNR_metric()
 
 
-def Trainer(epochs):
-    for epoch in range(30):
+def Trainer(epochs,model_file,freq):
+    for epoch in range(epochs):
         for x,y in DISTRIBUTED_train_DATASET:
             dlos,glos,psn = distributed_train_step(x,y)
 
             PSNR_.reset_states()
             psnr_est = psn.numpy()
-            print(f"Train steps : {epoch} TRAIN-PSNR : {psnr_est}")
-            generator.save_weights("CHECKPOINT.h5")
+            print(f"Train steps : {epoch} TRAIN-PSNR : {psnr_est/BATCH_SIZE}")
+            if epoch%freq == 0:
+                generator.save_weights(model_file)
         print("Validation Results ....")
         for b,z in VAL:
             out = generator.predict_on_batch(b)
             val_metric = PSNR_val.update_state(z,out)
-            print(f"PSNR : {PSNR_val.result().numpy()}")
+            print(f"PSNR : {PSNR_val.result().numpy()/BATCH_SIZE}")
             PSNR_val.reset_states()
 
 
 
-if __name__ = "__main__":
-	Trainer(EPOCH,"ckpt001.h5")
+if __name__ == "__main__":
+	Trainer(EPOCH,"ckpt001.h5",5)
