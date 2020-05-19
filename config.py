@@ -10,6 +10,7 @@ NORMALIZE              = 127.5
 BATCH                  = 6
 GLOBAL_BATCH_SIZE      = BATCH
 EPOCH                  = 500
+save_freq              = 20
 
 train_source_path      = "../DUMMY_DATA/TRAIN_LR/*png"
 train_target_path      = "../DUMMY_DATA/TRAIN_HR/*png"
