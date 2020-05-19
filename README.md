@@ -18,3 +18,5 @@ Baseline framework to train any image to image model
 from d_engine.discrim import *
 from g_engine.rdnsr import *
 ```
+#### In default the model gets trained with entropy, perceptual, mse
+#### But, any loss can be activated or deactivated based on the task (more flexible functionality to be added)
