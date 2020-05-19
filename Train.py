@@ -142,4 +142,4 @@ def Trainer(epochs,model_file,freq):
 
 
 if __name__ == "__main__":
-	Trainer(EPOCH,"ckpt001.h5",5)
+	Trainer(EPOCH,"ckpt001.h5",save_freq)
