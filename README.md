@@ -10,3 +10,11 @@ Baseline framework to train any image to image model
 * Train any Image to Image models with ease customization( Documentation in development)
 * add or detach models easily
 * Only supports distributed training
+
+## Example to train a custom image super resolution (2x) RDNSR generator with added discriminator (GAN loss)
+* In config.py set your configs
+* In Train.py line 28,29 import your models
+```
+from d_engine.discrim import *
+from g_engine.rdnsr import *
+```
