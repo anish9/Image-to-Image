@@ -5,12 +5,6 @@ Baseline framework to train any image to image model
 * Tensorflow 2.1
 * opencv
 
-
-## Core Functionality
-* Train any Image to Image models with ease customization( Documentation in development)
-* add or detach models easily
-* supports distributed training
-
 #### Example to train a custom image super resolution (2x) RDNSR generator with added discriminator (GAN loss)
 * In config.py set your configs
 * In Train.py line 28,29 import your models
@@ -23,3 +17,8 @@ from g_engine.rdnsr import *
 
 #### Trained SR output with (RDNSR+GANloss)
 ![alt text](https://github.com/anish9/Image_2_Image/blob/master/asset/i1.png)
+
+####  Functionality
+* Train any Image to Image models with ease customization( Documentation in development)
+* add or detach models easily
+* supports distributed training
