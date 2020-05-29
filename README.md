@@ -18,7 +18,4 @@ from g_engine.rdnsr import *
 #### Trained SR output with (RDNSR+GANloss)
 ![alt text](https://github.com/anish9/Image_2_Image/blob/master/asset/i1.png)
 
-####  Functionality
-* Train any Image to Image models with ease customization( Documentation in development)
-* add or detach models easily
-* supports distributed training
+[] to do
