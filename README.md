@@ -11,7 +11,7 @@ Baseline framework to train any image to image model
 * #### Just provide high resolution images path so automatically downscales and train the network,if needed added custom degradations
 #### PAIRED:
 * #### provide with high-resolution and low-resolution images which to be in paired format to train. 
-#### set the format in config file and also adjust given parameters like epochs, batchsize as per your task.
+##### * set the format in config file and also adjust given parameters like epochs, batchsize as per your task.
 
 ``` 
 data_template = AUTO
