@@ -6,7 +6,7 @@ Baseline framework to train any image to image model
 * opencv
 
 ## Train custom
-* Select the dataformat in config file, the available formats are "AUTO" and "PAIRED".
+### Select the dataformat in config file, the available formats are "AUTO" and "PAIRED".
 #### AUTO:
 * #### Just provide high resolution images path so automatically downscales and train the network,if needed added custom degradations
 #### PAIRED:
