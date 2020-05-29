@@ -1,5 +1,5 @@
 # GENCED
-GAN+encoder+cedoder(decoder)- TASKS BUILDER
+(GAN+encoder+cedoder{decoder})+(GAN-encoder+cedoder{decoder})
 
 ## Requirements
 * Tensorflow 2.1 <
