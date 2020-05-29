@@ -1,5 +1,7 @@
 # GENCED
-(GAN+encoder+cedoder{decoder})+(GAN-encoder+cedoder{decoder})
+your_config = (GAN+encoder+cedoder{decoder})+(GAN-encoder+cedoder{decoder})
+* Train discriminator if you need, detach if you don't need.
+* Train instantly with perceptual,mse regression losses and if GAN attached train bc_entropy loss.
 
 ## Requirements
 * Tensorflow 2.1 <
