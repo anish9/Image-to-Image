@@ -22,8 +22,8 @@ data_template = AUTO
 
 from g_engine.rdnsr import *
 from d_engine.discrim import *
-generator     = RRDNSR(upsample=2,rdb_depth=8) #subjected to builded and imported models
-discriminator = discriminator(h_,w_)
+generator     = RRDNSR(upsample=2,rdb_depth=8) #CUSOM BUILT GENERATOR
+discriminator = discriminator(h_,w_) #CUSTOM BUILT DISCRIMINATOR
 ``` 
 
 #### Trained SR output with (RDNSR+GANloss)
