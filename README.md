@@ -16,7 +16,15 @@ GAN+encoder+cedoder(decoder)- TASKS BUILDER
 ``` 
 data_template = AUTO
 ``` 
+#### Define your model architectures in g_engine and d_engine model
+``` 
+#EXAMPLE CODE OF CALLING YOUR CUSTOM MODELS
 
+from g_engine.rdnsr import *
+from d_engine.discrim import *
+generator     = RRDNSR(upsample=2,rdb_depth=8) #subjected to builded and imported models
+discriminator = discriminator(h_,w_)
+``` 
 
 #### Trained SR output with (RDNSR+GANloss)
 ![alt text](https://github.com/anish9/Image_2_Image/blob/master/asset/i1.png)
