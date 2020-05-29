@@ -1,21 +1,22 @@
-""" MAIN CONFIGS """
-
-"""SET YOUR CONFIGS HERE"""
 
 
-LOW_RESOLUTION         = 140
-UPSCALE                = 2
-HIGH_RESOLUTION        = LOW_RESOLUTION*UPSCALE
-NORMALIZE              = 127.5 
-BATCH                  = 6
-GLOBAL_BATCH_SIZE      = BATCH
-EPOCH                  = 500
-save_freq              = 20
+PAIRED = { "train_lq":"../textdataset/Dataset/train/LR/*png",
+           "train_hq":"../textdataset/Dataset/train/HR/*png",
+           "val_lq"  :"../textdataset/Dataset/val/LR/*png",
+           "val_hq"  :"../textdataset/Dataset/val/HR/*png",
+           "low_w":150,"low_h":100,
+          }
 
-train_source_path      = "../DUMMY_DATA/TRAIN_LR/*png"
-train_target_path      = "../DUMMY_DATA/TRAIN_HR/*png"
-val_source_path        = "../DUMMY_DATA/VAL_LR/*png"
-val_target_path        = "../DUMMY_DATA/VAL_HR/*png"
+AUTO =    {"train_hq":"../DIV2K/TRAIN_HR/*png",
+           "val_hq"  :"../DIV2K/VAL_HR/*png",
+           "patch_size":180}
+
+batch_size                           = 8
+save_freq                            = 10
+epochs                               = 1011
+UPSCALE                              = 2
+NORMALIZE                            = 127.5
+DISTRIBUTED_FLAG                     = False
+data_template                        = AUTO
 
 
-# BATCH_SIZE_PER_REPLICA = BATCH/strategy.num_replicas_in_sync

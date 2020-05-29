@@ -1,145 +1,109 @@
-"""BUILD : Beta"""
-"""PROP  : 2.0 <"""
-"""lib : TF2.1 """
-"""SOLVER : DISTRIBUTED"""
-
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
-configp = ConfigProto()
-configp.gpu_options.allow_growth = True
-session = InteractiveSession(config=configp)
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
 
-import cv2
-import numpy as np
-import tensorflow as tf
-from glob import glob
-import matplotlib.pyplot as plt
-import tensorflow.keras.backend as K
-from tensorflow.keras.layers import *
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import *
-from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping,TensorBoard
-from config import EPOCH,save_freq
-
-"""import your Model blocks here"""
-from dataset import *
 from utils import *
-from d_engine.discrim import *
+from glob import glob
+import tensorflow as tf
+from dataset import TRAIN,VAL,get_spec
+from config import batch_size,epochs,save_freq
 from g_engine.rdnsr import *
-
-strategy = tf.distribute.MirroredStrategy()
-
-train_lq = sorted(glob(train_source_path))
-train_hq = sorted(glob(train_target_path))
-val_lq   = sorted(glob(val_source_path))
-val_hq   = sorted(glob(val_target_path))
-
-
-BATCH_SIZE = GLOBAL_BATCH_SIZE
-BUFFER = 15
-BUFFER_FETCH  = 1
-TRAIN = tf.data.Dataset.from_tensor_slices((train_lq,train_hq))
-VAL   = tf.data.Dataset.from_tensor_slices((val_lq,val_hq))
-TRAIN = TRAIN.map(loader,num_parallel_calls=tf.data.experimental.AUTOTUNE)
-VAL   = VAL.map(loader,num_parallel_calls=tf.data.experimental.AUTOTUNE)
-TRAIN = TRAIN.batch(BATCH_SIZE,drop_remainder=True).shuffle(BUFFER)
-VAL   = VAL.batch(BATCH_SIZE,drop_remainder=True).shuffle(BUFFER)
-DISTRIBUTED_train_DATASET = strategy.experimental_distribute_dataset(TRAIN)
+from d_engine.discrim import *
+spec = get_spec()
 
 
 
+generator     = RRDNSR(upsample=2,rdb_depth=8) #subjected to builded and imported models
+h_,w_         = spec[0],spec[1]
+discriminator = discriminator(h_,w_)
 
-    
-with strategy.scope():
-    metric_op     = tf.keras.losses.Reduction.NONE
-    disc_optim    = tf.keras.optimizers.Adam(1e-4)
-    gen_optim     = tf.keras.optimizers.Adam(1e-5)
-    generator     = RRDNSR(upsample=UPSCALE,rdb_depth=12)
-#     generator.load_weights("CHECKPOINT1.h5")
-    discriminator = discriminator(HIGH_RESOLUTION,HIGH_RESOLUTION)
-    PSNR_         = PSNR_metric()
-    loss_object1  = Custom_Loss(reduction=metric_op)
-    loss_object2  = tf.keras.losses.BinaryCrossentropy(reduction=metric_op)
-    loss_object3  = tf.keras.losses.BinaryCrossentropy(reduction=metric_op)
-    loss_object4  = tf.keras.losses.MeanSquaredError(reduction=metric_op)
-    def compute_loss1(labels, predictions):
-        loss_func1  = loss_object1(labels, predictions)
-        return tf.nn.compute_average_loss(loss_func1, global_batch_size=GLOBAL_BATCH_SIZE)
-    def compute_loss2(labels, predictions):
-        loss_func2  = loss_object2(labels, predictions)
-        return tf.nn.compute_average_loss(loss_func2, global_batch_size=GLOBAL_BATCH_SIZE)
-    def compute_loss3(labels, predictions):
-        loss_func3  = loss_object3(labels, predictions)
-        return tf.nn.compute_average_loss(loss_func3, global_batch_size=GLOBAL_BATCH_SIZE)
-    def compute_loss4(labels, predictions):
-        loss_func4  = loss_object4(labels, predictions)
-        return tf.nn.compute_average_loss(loss_func4, global_batch_size=GLOBAL_BATCH_SIZE)
-    
-def train_step(low,high,add_disc):
+disc_optim    = tf.keras.optimizers.Adam(1e-4)
+gen_optim     = tf.keras.optimizers.Adam(1e-5)
+generator.load_weights("div2k_gen.h5")
+loss_object1  = Custom_Loss(reduction=tf.keras.losses.Reduction.AUTO)
+loss_object2  = tf.keras.losses.BinaryCrossentropy()
+loss_object4  = tf.keras.losses.MeanSquaredError()
+PSNR_         = PSNR_metric()
+
+def train_step(low,high,add_disc,mse_only=False,vgg_only=False):
+    """use custom loss if needed,(represent if customized loss objects and supply the loss func in required computation
+       modify traning strategy simply by flagging (add_disc) argument
+        ARGUMENTS: 
+        low  - low_res image
+        high - high_res image
+        add_disc -  adds GAN method to train the model(adds a supplied discriminator to compute GAN loss)
+                    ("Note" : this is simple gan and not computes as PATCH GAN)
+        mse_only - trains generator only with mse only
+        vgg_only - trains generator only with perceptual loss only
+    """
     batch_size  = tf.shape(low)[0]
     if add_disc:
-        print("TRAINING MODE : DISCRIMATOR ADDED")
         generate_sr = generator(low)
         true_labels = tf.ones((batch_size,1))
         fake_labels = tf.zeros((batch_size,1))
-
         with tf.GradientTape() as tape:
             predictions_true = discriminator(high)
             predictions_fake = discriminator(generate_sr)
-            d_true_loss = compute_loss3(true_labels, predictions_true)
-            d_fake_loss = compute_loss3(fake_labels, predictions_fake)
+            d_true_loss = loss_object2(true_labels, predictions_true)
+            d_fake_loss = loss_object2(fake_labels, predictions_fake)
             d_loss = d_true_loss+d_fake_loss
         grads = tape.gradient(d_loss, discriminator.trainable_weights)
         disc_optim.apply_gradients(zip(grads, discriminator.trainable_weights))
 
-    
-    print("TRAINING MODE : END-TO-END")
     with tf.GradientTape() as tape:
-        generate     = generator(low)
-        predictions2 = discriminator(generate)
-        lables2      = tf.ones((batch_size,1))
-        loss_op1 = compute_loss1(high,generate)
-        loss_op2 = compute_loss2(lables2,predictions2)
-        loss_op4 = compute_loss4(high,generate)
-        loss_op = 0.5*loss_op1+0.5*loss_op2+0.5*loss_op4
+        if add_disc:
+            generate     = generator(low)
+            predictions2 = discriminator(generate)
+            lables2      = tf.ones((batch_size,1)) 
+            loss_op1 = loss_object1(high,generate)
+            loss_op2 = loss_object2(lables2,predictions2)
+            loss_op4 = loss_object4(high,generate)
+            loss_op = loss_op1+loss_op4+loss_op2
+            if mse_only:
+                loss_op = loss_op4+loss_op2
+            if vgg_only:
+                loss_op = loss_op1+loss_op2
+        else:
+            loss_op1 = loss_object1(high,generate)
+            loss_op4 = loss_object4(high,generate)
+            loss_op  = loss_op1+loss_op4
+            if mse_only:
+                loss_op = loss_op4
+            if vgg_only:
+                loss_op = loss_op1
     grads = tape.gradient(loss_op, generator.trainable_weights)
     gen_optim.apply_gradients(zip(grads, generator.trainable_weights))
-    
     PSNR_state = PSNR_.update_state(high,generate)
-    
     if add_disc:
         return d_loss,loss_op,PSNR_.result()
     else:
         return 0.0,loss_op,PSNR_.result()
+
     
-@tf.function
-def distributed_train_step(low,high):
-    per_replica_losses = strategy.experimental_run_v2(train_step, args=(low,high,True))
-    return strategy.reduce(tf.distribute.ReduceOp.MEAN, per_replica_losses,
-                         axis=None)
-
-
-PSNR_val = PSNR_metric()
-
-
-def Trainer(epochs,model_file,freq):
-    for epoch in range(epochs):
-        for x,y in DISTRIBUTED_train_DATASET:
-            dlos,glos,psn = distributed_train_step(x,y)
-
+def TRAIN_SR(epochs,discriminator_=True,vgg_only=False,mse_only=False,save_freq=2,viz_count=3):
+    for e in range(epochs):
+        for x,y in TRAIN:
+            disc_loss,gen_loss,metric = train_step(x,y,discriminator_,vgg_only,mse_only)
+            print(f"Training step : {e} | disc_loss : {disc_loss} gen_loss : {gen_loss} PSNR_LOSS : {metric}")
             PSNR_.reset_states()
-            psnr_est = psn.numpy()
-            print(f"Train steps : {epoch} TRAIN-PSNR : {psnr_est/BATCH_SIZE}")
-            if epoch%freq == 0:
-                generator.save_weights(model_file)
-        print("Validation Results ....")
+            
         for b,z in VAL:
             out = generator.predict_on_batch(b)
-            val_metric = PSNR_val.update_state(z,out)
-            print(f"PSNR : {PSNR_val.result().numpy()/BATCH_SIZE}")
-            PSNR_val.reset_states()
+            val_metric = PSNR_.update_state(z,out)
+            val = PSNR_.result().numpy()
+            print(f"VALIDATION PSNR : {round(val,2)}")
+            PSNR_.reset_states()
+            
+        if e%save_freq == 0:
+            print(f"saving weights")
+            generator.save_weights("div2k_gen.h5")
+            discriminator.save_weights("div2k_dis.h5")
+            write_viz(VAL,generator,batch_size,viz_count)
 
 
 
-if __name__ == "__main__":
-	Trainer(EPOCH,"ckpt001.h5",save_freq)
+            
+if __name__ == "__main__":            
+    TRAIN_SR(epochs,save_freq,viz_count=5)

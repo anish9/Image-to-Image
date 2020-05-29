@@ -1,5 +1,3 @@
-
-"""build : pass"""
   
 import os
 import cv2
