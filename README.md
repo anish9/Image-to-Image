@@ -29,6 +29,10 @@ discriminator = discriminator(h_,w_) #CUSTOM BUILT DISCRIMINATOR
 ``` 
 
 #### Task Examples
-##### Image super-resolution
+##### * Image super-resolution
 ![alt text](https://github.com/anish9/Image_2_Image/blob/master/asset/i1.png)
+
+##### * Image-colorization
+![alt text](https://github.com/anish9/GENCED/blob/master/asset/pci.jpg)
+
 
