@@ -53,8 +53,8 @@ def train_step(low,high,add_disc,mse_only=False,vgg_only=False):
         disc_optim.apply_gradients(zip(grads, discriminator.trainable_weights))
 
     with tf.GradientTape() as tape:
+        generate     = generator(low)
         if add_disc:
-            generate     = generator(low)
             predictions2 = discriminator(generate)
             lables2      = tf.ones((batch_size,1)) 
             loss_op1 = loss_object1(high,generate)
