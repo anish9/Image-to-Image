@@ -106,4 +106,4 @@ def TRAIN_SR(epochs,discriminator_=True,vgg_only=False,mse_only=False,save_freq=
 
             
 if __name__ == "__main__":            
-    TRAIN_SR(epochs,save_freq,viz_count=5)
+    TRAIN_SR(epochs,discriminator_=True,save_freq,viz_count=5)
