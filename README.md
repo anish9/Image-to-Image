@@ -28,6 +28,7 @@ generator     = RRDNSR(upsample=2,rdb_depth=8) #CUSOM BUILT GENERATOR
 discriminator = discriminator(h_,w_) #CUSTOM BUILT DISCRIMINATOR
 ``` 
 
-#### Trained SR output with (RDNSR+GANloss)
+#### Task Examples
+##### Image super-resolution
 ![alt text](https://github.com/anish9/Image_2_Image/blob/master/asset/i1.png)
 
