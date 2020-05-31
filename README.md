@@ -1,7 +1,7 @@
 # GENCED
 your_config = (GAN+encoder+cedoder{decoder})+(GAN-encoder+cedoder{decoder})
 * Train discriminator if you need, detach if you don't need.
-* Train instantly with content loss, pixel wise loss
+* Train with content loss, pixel wise loss
 
 ## Requirements
 * Tensorflow 2.1 <
