@@ -24,7 +24,7 @@ data_template = AUTO
 
 from g_engine.rdnsr import *
 from d_engine.discrim import *
-generator     = RRDNSR(upsample=2,rdb_depth=8) #CUSOM BUILT GENERATOR
+generator     = RRDNSR(upsample=2,rdb_depth=8) #CUTSOM BUILT GENERATOR
 discriminator = discriminator(h_,w_) #CUSTOM BUILT DISCRIMINATOR
 ``` 
 
