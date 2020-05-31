@@ -2,6 +2,7 @@
 your_config = (GAN+encoder+cedoder{decoder})+(GAN-encoder+cedoder{decoder})
 * Train discriminator if you need, detach if you don't need.
 * Train with content loss, pixel wise loss
+* Intended for rapid research experiments
 
 ## Requirements
 * Tensorflow 2.1 <
