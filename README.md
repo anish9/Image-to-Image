@@ -1,5 +1,5 @@
 # GENCED
-[![start with why](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)]
+[![HitCount](http://hits.dwyl.com/anish9/GENCED.svg)](http://hits.dwyl.com/anish9/GENCED)
 
 your_config = (GAN+encoder+cedoder{decoder}) | (GAN-encoder+cedoder{decoder})
 * Train discriminator if you need, detach if you don't need.
