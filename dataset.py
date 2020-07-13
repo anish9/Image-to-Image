@@ -28,9 +28,11 @@ def loader_paired(lq,hq):
     simage,timage = paired(lq,hq,temp["low_h"],temp["low_w"])
     return simage,timage
 
-def auto(hqp,hqh,hqw):
+
+def auto(hqp,clip,hqh,hqw):
     simage  = tf.io.read_file(hqp)
     simage  = tf.io.decode_jpeg(simage,channels=3)
+    simage  = tf.image.resize(simage,size=[clip,clip])
     crop_hq = tf.image.random_crop(simage, [hqh,hqw,3], seed=None, name=None)
     crop_hq = tf.cast(crop_hq,tf.float32)
     crop_lq = tf.image.resize(crop_hq,size =[hqh//UPSCALE,hqw//UPSCALE])
@@ -38,8 +40,9 @@ def auto(hqp,hqh,hqw):
     return simage,timage
 
 def loader_auto(hq):
-    simage,timage = auto(hq,temp["patch_size"],temp["patch_size"])
+    simage,timage = auto(hq,temp["clip_dim"],temp["patch_size"],temp["patch_size"])
     return simage,timage
+
 
 if temp == PAIRED:
     train_lq = sorted(glob(temp["train_lq"])) 
