@@ -8,20 +8,19 @@ from utils import *
 from glob import glob
 import tensorflow as tf
 from dataset import TRAIN,VAL,get_spec
-from config import batch_size,epochs,save_freq
+from config import batch_size,epochs,save_freq,UPSCALE
 from g_engine.rdnsr import *
 from d_engine.discrim import *
 spec = get_spec()
 
 
 
-generator     = RRDNSR(upsample=2,rdb_depth=8) #subjected to builded and imported models
+generator     = RRDNSR(upsample=UPSCALE,rdb_depth=8) #subjected to builded and imported models
 h_,w_         = spec[0],spec[1]
 discriminator = discriminator(h_,w_)
 
 disc_optim    = tf.keras.optimizers.Adam(1e-4)
 gen_optim     = tf.keras.optimizers.Adam(1e-5)
-generator.load_weights("div2k_gen.h5")
 loss_object1  = Custom_Loss(reduction=tf.keras.losses.Reduction.AUTO)
 loss_object2  = tf.keras.losses.BinaryCrossentropy()
 loss_object4  = tf.keras.losses.MeanSquaredError()
@@ -106,4 +105,4 @@ def TRAIN_SR(epochs,discriminator_=True,vgg_only=False,mse_only=False,save_freq=
 
             
 if __name__ == "__main__":            
-    TRAIN_SR(epochs,discriminator_=True,save_freq,viz_count=5)
+    TRAIN_SR(epochs,True,save_freq,viz_count=5)

@@ -83,7 +83,7 @@ def train_step(low,high,add_disc):
         return 0.0,loss_op,PSNR_.result()
         
  
- @tf.function
+@tf.function
 def distributed_train_step(low,high):
     per_replica_losses = strategy.experimental_run_v2(train_step, args=(low,high,True))
     return strategy.reduce(tf.distribute.ReduceOp.MEAN, per_replica_losses,

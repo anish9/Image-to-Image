@@ -20,7 +20,7 @@ def paired(lq,hq,lrh,lrw):
     simage = tf.image.resize(simage,(lrh,lrw))
     timage = tf.io.read_file(hq)
     timage = tf.io.decode_png(timage,channels=3)
-    timage = tf.image.resize(timage,(lrh*2,lrw*2))
+    timage = tf.image.resize(timage,(lrh*UPSCALE,lrw*UPSCALE))
     simage,timage = normalize_image(simage,timage,NORMALIZE)  
     return simage,timage
 

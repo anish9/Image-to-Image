@@ -1,24 +1,23 @@
 
-
-PAIRED = { "train_lq":"../textdataset/Dataset/train/LR/*png",
-           "train_hq":"../textdataset/Dataset/train/HR/*png",
-           "val_lq"  :"../textdataset/Dataset/val/LR/*png",
-           "val_hq"  :"../textdataset/Dataset/val/HR/*png",
-           "low_w":150,"low_h":100,
+PAIRED = { "train_lq":"/home/mia/anish/experiments/image_tasks/datasets/colo_3/t_gray/*jpg",
+           "train_hq":"/home/mia/anish/experiments/image_tasks/datasets/colo_3/t_rgb/*jpg",
+           "val_lq"  :"/home/mia/anish/experiments/image_tasks/datasets/colo_3/v_gray/*jpg",
+           "val_hq"  :"/home/mia/anish/experiments/image_tasks/datasets/colo_3/v_rgb/*jpg",
+           "low_w":64,"low_h":64,
           }
 
-AUTO =    {"train_hq":"../DIV2K/TRAIN_HR/*png",
-           "val_hq"  :"../DIV2K/VAL_HR/*png",
+AUTO =    {"train_hq":"/home/mia/anish/experiments/image_tasks/datasets/colo_3/t_rgb/*jpg",
+           "val_hq"  :"/home/mia/anish/experiments/image_tasks/datasets/colo_3/v_rgb/*jpg",
            "clip_dim":512,
-           "patch_size":352
-          }
+           "patch_size":352}
 
-batch_size                           = 8
+
+batch_size                           = 4
 save_freq                            = 10
-epochs                               = 1011
-UPSCALE                              = 2
+epochs                               = 30
+UPSCALE                              = 8
 NORMALIZE                            = 127.5
 DISTRIBUTED_FLAG                     = False
-data_template                        = AUTO
+data_template                        = PAIRED
 
 
