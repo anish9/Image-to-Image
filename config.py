@@ -9,7 +9,9 @@ PAIRED = { "train_lq":"../textdataset/Dataset/train/LR/*png",
 
 AUTO =    {"train_hq":"../DIV2K/TRAIN_HR/*png",
            "val_hq"  :"../DIV2K/VAL_HR/*png",
-           "patch_size":180}
+           "clip_dim":512,
+           "patch_size":352
+          }
 
 batch_size                           = 8
 save_freq                            = 10
