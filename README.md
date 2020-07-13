@@ -39,5 +39,5 @@ discriminator = discriminator(h_,w_) #CUSTOM BUILT DISCRIMINATOR
 ![alt text](https://github.com/anish9/GENCED/blob/master/asset/pci.jpg)
 
 > Todo
-- [ ] add distributed data and training pipeline
+- [x] add distributed data and training pipeline
 - [ ] add more research papers in the pipeline
