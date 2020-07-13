@@ -47,3 +47,17 @@ def write_viz(method,network,batchsize,image_count):
             vis_image   = cv2.cvtColor(vis_image,cv2.COLOR_BGR2RGB)
             vis_image   = vis_image.astype(np.int16)
             cv2.imwrite(str(q)+"_vis.png",vis_image)
+
+            
+def write_viz_dist(method,network,batchsize,image_count):
+    for x,y in method.take(1):
+        preds       = network.predict_on_batch(x)
+        image_index = np.random.randint(1,batchsize,image_count)
+        for q in range(len(image_index)):
+            vis_image   = preds[q,:,:,:]
+            vis_image   = vis_image+1
+            vis_image   = vis_image*127.5
+            vis_image   = cv2.cvtColor(vis_image,cv2.COLOR_BGR2RGB)
+            vis_image   = np.uint16(vis_image)
+            
+            cv2.imwrite(str(q)+"_vis.png",vis_image)
