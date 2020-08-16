@@ -1,0 +1,4 @@
+tensorflow-gpu==2.1
+opencv-python
+numpy
+tqdm
