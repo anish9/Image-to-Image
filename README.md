@@ -1,7 +1,7 @@
 # GENCED
 [![HitCount](http://hits.dwyl.com/anish9/GENCED.svg)](http://hits.dwyl.com/anish9/GENCED)
 
-your_config = (GAN+encoder+cedoder{decoder}) | (GAN-encoder+cedoder{decoder})
+your_config = (GAN+encoder+decoder}) | (encoder+decoder-GAN)
 * Train discriminator if you need, detach if you don't need.
 * Train with content loss, pixel wise loss
 * Intended for rapid research experiments
